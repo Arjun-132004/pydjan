@@ -8,6 +8,21 @@ RUN cd frontend && npm pkg delete scripts.prepare scripts.postinstall >/dev/null
 COPY . .
 # The repo's own postinstall, now that the files it reads are here.
 RUN cd frontend && npm run postinstall --if-present
+# The build runs EXACTLY as the repository defines it — no NODE_ENV forced.
+#
+# WHY NOT (2026-09-19, pydjan). Setting NODE_ENV=production looked obviously
+# right: that repo's webpack config reads it to choose `publicPath`, and
+# without it the bundle asks for its chunks at "/" and gets 400. But the same
+# switch turns on HtmlWebpackPlugin's minifier, and that project's HTML
+# template is a DJANGO template —
+#
+#     <link rel="icon" href="{% static "frontend/logo-32.png" %}" />
+#
+# nested quotes and all. html-minifier-terser cannot parse it, and the build
+# died. A deploy tool may not change what a build MEANS; the repo's own
+# scripts decide that. vite/next/react-scripts already build in production
+# mode on their own, so the common case needs nothing here — and a repo whose
+# asset URLs depend on NODE_ENV is told so in the deploy notes instead.
 RUN cd frontend && pnpm run build
 # Build-only dependencies never reach the runtime image.
 RUN rm -rf frontend/node_modules
