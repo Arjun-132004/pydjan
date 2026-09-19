@@ -69,4 +69,4 @@ RUN python manage.py collectstatic --noinput
 RUN useradd --create-home --uid 10001 appuser && chown -R appuser /app
 USER 10001
 EXPOSE 8000
-CMD ["poetry","run","python3","manage.py","runserver"]
+CMD ["python3","manage.py","runserver","0.0.0.0:8000"]
