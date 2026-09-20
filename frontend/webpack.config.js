@@ -23,9 +23,8 @@ module.exports = {
   entry: ["./index.tsx"],
   output: {
     filename: "index.js",
-    publicPath: "/static/frontend/",
     path: path.resolve(__dirname, PUBLIC_PATH.replace("/", "")),
-    publicPath: PRODUCTION_MODE ? PUBLIC_PATH : "/",
+    publicPath: PUBLIC_PATH,
   },
   devtool: "source-map",
   resolve: {
